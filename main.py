@@ -31,3 +31,6 @@ cabeca_selecionada = 0
 # Extrair as atenções da camada e acabeça selecionadas.
 # Atenções tem a forma (batch_size, num_heads, sequence_length, sequence_length)
 attention_matrix = attentions[camada_selecionada][0, cabeca_selecionada].detach().numpy()
+
+# Obter os tokens (inclui tokens especiais como [CLS] e [SEP])
+tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
