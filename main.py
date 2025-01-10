@@ -4,14 +4,18 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-# Carregar o tockenizer e o modelo BERT pré-treinado
+# Carregar o tokenizer e o modelo BERT pré-treinado com atenção ativada
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-model = BertModel.from_pretrained('bert-base-uncased', output_hidden_states=True)
+model = BertModel.from_pretrained(
+    'bert-base-uncased', 
+    output_hidden_states=True,    # Se precisar das camadas ocultas
+    output_attentions=True        # Ativar a saída de atenções
+)
 
-# Configurando o modelo pra avaliação
+# Configurando o modelo para avaliação
 model.eval()
 
-# Definir a pergunra
+# Definir a pergunta
 pergunta = "Quais são as 3 Leis de Newton?"
 
 # Tokenizar a entrada
@@ -24,12 +28,16 @@ with torch.no_grad():
 # Extraindo as atenções
 attentions = outputs.attentions
 
-# Escolhendo a camada e a cabeca que desejamos visualizar
+# Verificar se as atenções foram extraídas corretamente
+if attentions is None:
+    raise ValueError("As atenções não foram retornadas. Verifique se 'output_attentions=True' está configurado.")
+
+# Escolher a camada e a cabeça que desejamos visualizar
 camada_selecionada = 0
 cabeca_selecionada = 0
 
-# Extrair as atenções da camada e acabeça selecionadas.
-# Atenções tem a forma (batch_size, num_heads, sequence_length, sequence_length)
+# Extrair as atenções da camada e cabeça selecionadas.
+# Atenções têm a forma (batch_size, num_heads, sequence_length, sequence_length)
 attention_matrix = attentions[camada_selecionada][0, cabeca_selecionada].detach().numpy()
 
 # Obter os tokens (inclui tokens especiais como [CLS] e [SEP])
