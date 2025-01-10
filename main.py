@@ -1,5 +1,8 @@
 from transformers import BertTokenizer, BertModel
 import torch
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
 
 # Carregar o tockenizer e o modelo BERT pré-treinado
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -20,3 +23,11 @@ with torch.no_grad():
 
 # Extraindo as atenções
 attentions = outputs.attentions
+
+# Escolhendo a camada e a cabeca que desejamos visualizar
+camada_selecionada = 0
+cabeca_selecionada = 0
+
+# Extrair as atenções da camada e acabeça selecionadas.
+# Atenções tem a forma (batch_size, num_heads, sequence_length, sequence_length)
+attention_matrix = attentions[camada_selecionada][0, cabeca_selecionada].detach().numpy()
