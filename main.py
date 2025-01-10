@@ -34,3 +34,46 @@ attention_matrix = attentions[camada_selecionada][0, cabeca_selecionada].detach(
 
 # Obter os tokens (inclui tokens especiais como [CLS] e [SEP])
 tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
+
+# Criar um DataFrame para armazenar a matriz de atenção
+df = pd.DataFrame(attention_matrix, columns=tokens, index=tokens)
+
+# Criar uma grade para os eixos X e Y
+x = np.arange(len(tokens))
+y = np.arange(len(tokens))
+x, y = np.meshgrid(x, y)
+
+# Obter os valores de atenção para o eixo Z
+z = attention_matrix
+
+# Criar o gráfico de superfície
+fig = go.Figure(data=[go.Surface(
+    x=x,
+    y=y,
+    z=z,
+    colorscale='Viridis',
+    colorbar=dict(title='Atenção')
+)])
+
+# Personalizar o layout
+fig.update_layout(
+    title=f'Atenção - Camada {camada_selecionada +1}, Cabeça {cabeca_selecionada +1}',
+    scene=dict(
+        xaxis=dict(
+            tickmode='array',
+            tickvals=list(range(len(tokens))),
+            ticktext=tokens,
+            title='Palavra de Entrada'
+        ),
+        yaxis=dict(
+            tickmode='array',
+            tickvals=list(range(len(tokens))),
+            ticktext=tokens,
+            title='Palavra de Foco'
+        ),
+        zaxis=dict(title='Peso da Atenção')
+    )
+)
+
+# Exibir o gráfico
+fig.show()
